@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.25.0 (HEAD)
+  labels:
+    io.kompose.service: kafka
+  name: kafka
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      io.kompose.service: kafka
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.25.0 (HEAD)
+      labels:
+        io.kompose.service: kafka
+    spec:
+      containers:
+        - env:
+            - name: ALLOW_PLAINTEXT_LISTENER
+              value: "yes"
+            - name: KAFKA_CFG_ZOOKEEPER_CONNECT
+              value: zookeeper:2181
+            - name: KAFKA_ADVERTISED_PORT
+              value: "30718"
+            - name: KAFKA_ADVERTISED_HOST_NAME
+              value: kafka
+            - name: KAFKA_BROKER_ID
+              value: "0"
+            - name: KAFKA_CREATE_TOPICS
+              value: admintome-test:1:1
+          image: bitnami/kafka:3
+          name: kafka
+          ports:
+            - containerPort: 9092
+          resources: {}
+          volumeMounts:
+            - mountPath: /bitnami
+              name: pgkafka-kafka-data
+      restartPolicy: Always
+      volumes:
+        - name: pgkafka-kafka-data
+          persistentVolumeClaim:
+            claimName: pgkafka-kafka-data
+status: {}

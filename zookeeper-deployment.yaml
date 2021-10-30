@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.25.0 (HEAD)
+  
+  labels:
+    io.kompose.service: zookeeper
+  name: zookeeper
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      io.kompose.service: zookeeper
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        kompose.cmd: kompose convert
+        kompose.version: 1.25.0 (HEAD)
+      
+      labels:
+        io.kompose.service: zookeeper
+    spec:
+      containers:
+        - env:
+            - name: ALLOW_ANONYMOUS_LOGIN
+              value: "yes"
+            - name: ZOOKEEPER_ID
+              value: "1"
+            - name: ZOOKEEPER_SERVER_1
+              value: zookeeper-1
+          image:  bitnami/zookeeper:3.7
+          name: zookeeper
+          ports:
+            - containerPort: 2181
+          resources: {}
+          volumeMounts:
+            - mountPath: /bitnami
+              name: pgkafka-zookeeper-data
+      restartPolicy: Always
+      volumes:
+        - name: pgkafka-zookeeper-data
+          persistentVolumeClaim:
+            claimName: pgkafka-zookeeper-data
+status: {}

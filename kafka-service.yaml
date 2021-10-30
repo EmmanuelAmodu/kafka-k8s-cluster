@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  annotations:
+    kompose.cmd: kompose convert
+    kompose.version: 1.25.0 (HEAD)
+  
+  labels:
+    app: kafka
+  name: kafka
+spec:
+  ports:
+    - name: "kafka-port"
+      port: 9092
+      targetPort: 9092
+  selector:
+    app: kafka
+    id: "0"
+status:
+  loadBalancer: {}
